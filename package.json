@@ -1,23 +1,74 @@
 {
   "name": "huurradar",
-  "version": "0.2.0",
-  "description": "House hunting automation dashboard",
+  "version": "0.2.1",
+  "description": "Self-hosted Dutch rental finder: watches six platforms on a schedule, filters to your criteria, reads income requirements off the listing with AI, emails you the matches, and can auto-apply. Web dashboard included.",
+  "keywords": [
+    "rental",
+    "huurwoning",
+    "huurwoningen",
+    "woning-zoeken",
+    "netherlands",
+    "nederland",
+    "dutch",
+    "funda",
+    "vbt",
+    "bouwinvest",
+    "mvgm",
+    "alliantie",
+    "brockhoff",
+    "scraper",
+    "dashboard",
+    "self-hosted",
+    "housing",
+    "woningmarkt",
+    "notifications",
+    "gemini",
+    "automation"
+  ],
   "main": "index.js",
+  "bin": {
+    "huurradar": "bin/huurradar.js"
+  },
+  "files": [
+    "bin",
+    "index.js",
+    "routes",
+    "services",
+    "scrapers",
+    "public",
+    ".env.example",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "start": "node index.js",
-    "dev": "node --watch index.js"
+    "dev": "node --watch index.js",
+    "init": "node bin/huurradar.js init"
   },
   "dependencies": {
-    "@google/generative-ai": "^0.24.1",
     "2captcha": "^3.0.5-2",
-    "axios": "^1.6.0",
+    "@google/generative-ai": "^0.24.1",
+    "axios": "^1.7.0",
     "better-sqlite3": "^11.10.0",
-    "cheerio": "^1.0.0-rc.12",
+    "cheerio": "^1.0.0",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "nl-rental-scrapers": "^0.1.0",
     "node-cron": "^4.6.0",
     "nodemailer": "^9.0.3",
     "playwright": "^1.57.0"
-  }
+  },
+  "license": "MIT",
+  "author": "OmarNassar1127 (https://github.com/OmarNassar1127)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OmarNassar1127/huurradar.git"
+  },
+  "bugs": {
+    "url": "https://github.com/OmarNassar1127/huurradar/issues"
+  },
+  "homepage": "https://github.com/OmarNassar1127/huurradar#readme"
 }
