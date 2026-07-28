@@ -1,0 +1,3 @@
+# Brockhoff's reCAPTCHA SITE key. Public by design — Google requires it in the
+# page HTML for the widget to render. Not a credential.
+services/autoapply.js:generic-api-key:12
