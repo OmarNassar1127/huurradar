@@ -20,15 +20,8 @@ function isSpecialAddress(listing) {
   return specialStreets.some(special => streetLower.includes(special));
 }
 
-// The six platform adapters live in the nl-rental-scrapers package, which is
-// ESM-only. This file is CommonJS, so it is loaded with a dynamic import once
-// and cached. Keeping the adapters in a package means a platform fix ships as
-// a version bump rather than a patch to this app.
-let scraperLibPromise = null;
-function scraperLib() {
-  if (!scraperLibPromise) scraperLibPromise = import('nl-rental-scrapers');
-  return scraperLibPromise;
-}
+// The six platform adapters. One file per site under ./platforms/adapters.
+const { scrapePlatform, getAdapter } = require('./platforms');
 
 // Scraper state
 let scraperState = {
@@ -123,12 +116,10 @@ async function updateDatabase(listings) {
 
 async function runScraper(id, areas) {
   try {
-    const { scrapePlatform } = await scraperLib();
     const criteria = getCriteriaForPlatform(id);
 
-    // The package filters against the same criteria we then re-check locally,
-    // so `filter: false` here keeps every fetched listing visible in the live
-    // viewer, with its own reason for being dropped.
+    // Skip the adapter-level filter: we re-check locally anyway, and keeping
+    // every fetched listing lets the live viewer show what was dropped and why.
     const result = await scrapePlatform(
       id,
       {
@@ -203,8 +194,6 @@ async function fetchAllListings() {
       .split(',')
       .map(c => c.trim().toLowerCase())
       .filter(Boolean);
-
-    const { getAdapter } = await scraperLib();
 
     for (const scraper of scrapers) {
       if (getAdapter(scraper.id)) {

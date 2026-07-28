@@ -44,8 +44,7 @@ while they are still available.
 ## What it does
 
 **Watches six platforms.** Funda, VBT, Bouwinvest, MVGM, de Alliantie and
-Brockhoff, through the [`nl-rental-scrapers`](https://github.com/OmarNassar1127/nl-rental-scrapers)
-package. Each one gets its own criteria and its own on/off switch.
+Brockhoff. Each one gets its own criteria and its own on/off switch.
 
 **Filters to your criteria.** Per-platform minimum rooms, minimum living area
 and maximum rent, plus a city allowlist. Tunable from the dashboard, no restart.
@@ -124,7 +123,7 @@ addresses. Empty until you fill it in.
 ```
 every SCRAPE_INTERVAL_MINUTES
   ├── for each enabled platform
-  │     fetch listings for your areas         (nl-rental-scrapers)
+  │     fetch listings for your areas
   │     tag each one: passed / dropped + why  (cached for the live view)
   ├── keep what clears city, price and criteria
   ├── for each genuinely new listing
@@ -186,6 +185,7 @@ bin/huurradar.js    npx launcher and `init`
 scrapers/
   index.js          orchestration: fetch, tag, dedupe, notify, archive
   base.js           criteria, special addresses, search-area parsing
+  platforms/        the six site adapters, one file each
 services/
   ai.js             Gemini: income analysis + motivation letters
   autoapply.js      Playwright application submission
@@ -198,15 +198,12 @@ routes/             REST API behind auth
 public/             dashboard (vanilla JS, Tailwind via CDN)
 ```
 
-The platform adapters are not in this repo. They live in
-[`nl-rental-scrapers`](https://github.com/OmarNassar1127/nl-rental-scrapers), so
-a scraper fix ships as a version bump instead of a patch to this app.
+Everything is in this one package. No build step, no companion library to
+install, no service to sign up for.
 
 ## Related
 
-- [`nl-rental-scrapers`](https://github.com/OmarNassar1127/nl-rental-scrapers) — the six platform adapters, standalone
-- [`nl-mortgage`](https://github.com/OmarNassar1127/nl-mortgage) — Dutch mortgage capacity, if you are buying rather than renting
-- [`huischeck`](https://github.com/OmarNassar1127/huischeck) — due diligence on a property you already found
+- [`huischeck`](https://github.com/OmarNassar1127/huischeck) — the buying-side counterpart: paste one listing, get a scored due-diligence report
 
 ## License
 
