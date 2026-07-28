@@ -26,12 +26,6 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-var funda_exports = {};
-__export(funda_exports, {
-  fundaAdapter: () => fundaAdapter,
-  parseFundaListings: () => parseFundaListings
-});
-module.exports = __toCommonJS(funda_exports);
 var cheerio = __toESM(require("cheerio"), 1);
 const BASE = "https://www.funda.nl";
 function listingIdFrom(href) {
@@ -102,7 +96,7 @@ const fundaAdapter = {
   requires: [],
   async fetch(criteria, ctx) {
     const all = [];
-    const seen = /* @__PURE__ */ new Set();
+    const seen = new Set();
     const maxPages = criteria.maxPages ?? 7;
     const radius = criteria.radiusKm ?? 10;
     const minPrice = criteria.minPrice ?? 0;
@@ -149,8 +143,8 @@ const fundaAdapter = {
     return all;
   }
 };
-// Annotate the CommonJS export names for ESM import in node:
-0 && (module.exports = {
+
+module.exports = {
   fundaAdapter,
-  parseFundaListings
-});
+  parseFundaListings,
+};

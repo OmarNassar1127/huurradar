@@ -26,14 +26,8 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-var mvgm_exports = {};
-__export(mvgm_exports, {
-  mvgmAdapter: () => mvgmAdapter,
-  parseMvgmListings: () => parseMvgmListings
-});
-module.exports = __toCommonJS(mvgm_exports);
 var cheerio = __toESM(require("cheerio"), 1);
-var import_http = require("../http");
+const { cookiesToString, parseCookies } = require("../http");
 const BASE = "https://ikwilhuren.nu";
 const AANBOD = `${BASE}/aanbod/`;
 function parseMvgmListings(html) {
@@ -104,14 +98,14 @@ async function fetchArea(area, criteria, ctx, seen) {
     timeout: 15e3,
     validateStatus: () => true
   });
-  cookies = { ...cookies, ...(0, import_http.parseCookies)(first.headers["set-cookie"]) };
+  cookies = { ...cookies, ...(0, parseCookies)(first.headers["set-cookie"]) };
   await ctx.delay(500);
   const second = await ctx.http.get(AANBOD, {
-    headers: { Cookie: (0, import_http.cookiesToString)(cookies), Referer: AANBOD },
+    headers: { Cookie: (0, cookiesToString)(cookies), Referer: AANBOD },
     timeout: 15e3,
     validateStatus: () => true
   });
-  cookies = { ...cookies, ...(0, import_http.parseCookies)(second.headers["set-cookie"]) };
+  cookies = { ...cookies, ...(0, parseCookies)(second.headers["set-cookie"]) };
   if (typeof second.data !== "string") return listings;
   const $page = cheerio.load(second.data);
   const csrfToken = $page('meta[name="csrf"]').attr("content") ?? $page('input[name="_token"]').first().attr("value");
@@ -143,7 +137,7 @@ async function fetchArea(area, criteria, ctx, seen) {
   ]);
   const postHeaders = {
     "Content-Type": "application/x-www-form-urlencoded",
-    Cookie: (0, import_http.cookiesToString)(cookies),
+    Cookie: (0, cookiesToString)(cookies),
     Referer: AANBOD,
     Origin: BASE
   };
@@ -155,13 +149,13 @@ async function fetchArea(area, criteria, ctx, seen) {
     maxRedirects: 0,
     validateStatus: () => true
   });
-  cookies = { ...cookies, ...(0, import_http.parseCookies)(posted.headers["set-cookie"]) };
+  cookies = { ...cookies, ...(0, parseCookies)(posted.headers["set-cookie"]) };
   await ctx.delay(500);
   const maxPages = criteria.maxPages ?? 7;
   for (let page = 1; page <= maxPages; page++) {
     const pageUrl = page === 1 ? AANBOD : `${AANBOD}?page=${page}`;
     const response = await ctx.http.get(pageUrl, {
-      headers: { Cookie: (0, import_http.cookiesToString)(cookies), Referer: AANBOD },
+      headers: { Cookie: (0, cookiesToString)(cookies), Referer: AANBOD },
       timeout: 15e3,
       validateStatus: () => true
     });
@@ -189,7 +183,7 @@ const mvgmAdapter = {
   requires: ["coordinates"],
   async fetch(criteria, ctx) {
     const all = [];
-    const seen = /* @__PURE__ */ new Set();
+    const seen = new Set();
     for (const area of criteria.areas) {
       if (area.lat === void 0 || area.lng === void 0) continue;
       try {
@@ -203,8 +197,8 @@ const mvgmAdapter = {
     return all;
   }
 };
-// Annotate the CommonJS export names for ESM import in node:
-0 && (module.exports = {
+
+module.exports = {
   mvgmAdapter,
-  parseMvgmListings
-});
+  parseMvgmListings,
+};

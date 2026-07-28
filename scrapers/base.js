@@ -87,15 +87,9 @@ function meetsCriteria(listing) {
   return roomsOk && areaOk && priceOk;
 }
 
-function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 module.exports = {
   meetsCriteria,
   getCriteriaForPlatform,
   getSpecialStreets,
-  getSearchAreas,
-  delay,
-  DEFAULT_CRITERIA
+  getSearchAreas
 };

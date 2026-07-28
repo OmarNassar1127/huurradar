@@ -1,28 +1,6 @@
 "use strict";
-var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __export = (target, all) => {
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
-};
-var __copyProps = (to, from, except, desc) => {
-  if (from && typeof from === "object" || typeof from === "function") {
-    for (let key of __getOwnPropNames(from))
-      if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
-  }
-  return to;
-};
-var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-var alliantie_exports = {};
-__export(alliantie_exports, {
-  alliantieAdapter: () => alliantieAdapter,
-  parseAlliantieResponse: () => parseAlliantieResponse
-});
-module.exports = __toCommonJS(alliantie_exports);
-var import_http = require("../http");
+
+const { parseEuroPrice } = require("../http");
 const BASE = "https://ik-zoek.de-alliantie.nl";
 function cityFromUrl(url) {
   if (!url) return "";
@@ -43,7 +21,7 @@ function parseAlliantieResponse(data) {
       zipcode: "",
       // not provided by the API
       city: cityFromUrl(item.url),
-      price: (0, import_http.parseEuroPrice)(item.price),
+      price: (0, parseEuroPrice)(item.price),
       livingArea: item.size ?? 0,
       totalRooms: item.rooms ?? 0,
       propertyType: item.type ?? "apartment",
@@ -109,8 +87,8 @@ const alliantieAdapter = {
     return listings;
   }
 };
-// Annotate the CommonJS export names for ESM import in node:
-0 && (module.exports = {
+
+module.exports = {
   alliantieAdapter,
-  parseAlliantieResponse
-});
+  parseAlliantieResponse,
+};

@@ -26,18 +26,6 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-var http_exports = {};
-__export(http_exports, {
-  DEFAULT_USER_AGENT: () => DEFAULT_USER_AGENT,
-  consoleLogger: () => consoleLogger,
-  cookiesToString: () => cookiesToString,
-  createHttpClient: () => createHttpClient,
-  delay: () => delay,
-  parseCookies: () => parseCookies,
-  parseEuroPrice: () => parseEuroPrice,
-  silentLogger: () => silentLogger
-});
-module.exports = __toCommonJS(http_exports);
 var import_axios = __toESM(require("axios"), 1);
 var import_node_http = __toESM(require("node:http"), 1);
 var import_node_https = __toESM(require("node:https"), 1);
@@ -89,8 +77,8 @@ function parseEuroPrice(raw) {
   if (!match || !match[1]) return 0;
   return parseInt(match[1].replace(/\./g, "").replace(",", ""), 10) || 0;
 }
-// Annotate the CommonJS export names for ESM import in node:
-0 && (module.exports = {
+
+module.exports = {
   DEFAULT_USER_AGENT,
   consoleLogger,
   cookiesToString,
@@ -98,5 +86,5 @@ function parseEuroPrice(raw) {
   delay,
   parseCookies,
   parseEuroPrice,
-  silentLogger
-});
+  silentLogger,
+};

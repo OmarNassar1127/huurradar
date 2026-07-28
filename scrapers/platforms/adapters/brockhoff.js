@@ -26,14 +26,8 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-var brockhoff_exports = {};
-__export(brockhoff_exports, {
-  brockhoffAdapter: () => brockhoffAdapter,
-  parseBrockhoffListings: () => parseBrockhoffListings
-});
-module.exports = __toCommonJS(brockhoff_exports);
 var cheerio = __toESM(require("cheerio"), 1);
-var import_http = require("../http");
+const { parseEuroPrice } = require("../http");
 const BASE = "https://brockhoff.nl";
 const RENTAL_CODE = 170;
 function parseAddress(raw) {
@@ -67,7 +61,7 @@ function parseBrockhoffListings(html, filterFloors) {
       zipcode: "",
       // not printed on the results page
       city,
-      price: (0, import_http.parseEuroPrice)(article.find(".prijs").text().trim()),
+      price: (0, parseEuroPrice)(article.find(".prijs").text().trim()),
       livingArea: filterFloors.minLivingArea,
       totalRooms: filterFloors.minRooms,
       propertyType: "apartment",
@@ -84,7 +78,7 @@ const brockhoffAdapter = {
   requires: ["coordinates"],
   async fetch(criteria, ctx) {
     const all = [];
-    const seen = /* @__PURE__ */ new Set();
+    const seen = new Set();
     const minRooms = criteria.minRooms ?? 1;
     const minArea = criteria.minLivingArea ?? 0;
     const radius = criteria.radiusKm ?? 10;
@@ -117,8 +111,8 @@ const brockhoffAdapter = {
     return all;
   }
 };
-// Annotate the CommonJS export names for ESM import in node:
-0 && (module.exports = {
+
+module.exports = {
   brockhoffAdapter,
-  parseBrockhoffListings
-});
+  parseBrockhoffListings,
+};

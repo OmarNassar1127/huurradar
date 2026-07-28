@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const { logInfo } = require('./logger');
 const { hashPassword } = require('./auth');
 
+const { formatBytes } = require('./format');
 let db = null;
 
 function getDb() {
@@ -160,41 +161,31 @@ function initializeDatabase(dataDir) {
   // Clean expired sessions
   db.exec("DELETE FROM sessions WHERE expires_at < datetime('now')");
   
-  // Seed scrapers if empty
-  const scraperCount = db.prepare("SELECT COUNT(*) as count FROM scrapers").get().count;
-  if (scraperCount === 0) {
-    const insertScraper = db.prepare(`
-      INSERT INTO scrapers (id, name, min_rooms, min_living_area, max_price) 
-      VALUES (?, ?, ?, ?, ?)
-    `);
-    // Neutral starting criteria — tune each platform from the Scrapers page.
-    const minRooms = parseInt(process.env.DEFAULT_MIN_ROOMS) || 2;
-    const minArea = parseInt(process.env.DEFAULT_MIN_LIVING_AREA) || 40;
-    const maxPrice = parseInt(process.env.DEFAULT_MAX_PRICE) || 2000;
-    insertScraper.run('funda', 'Funda', minRooms, minArea, maxPrice);
-    insertScraper.run('vbt', 'VBT', minRooms, minArea, maxPrice);
-    insertScraper.run('bouwinvest', 'Bouwinvest', minRooms, minArea, maxPrice);
-    insertScraper.run('mvgm', 'MVGM', minRooms, minArea, maxPrice);
-    insertScraper.run('alliantie', 'Alliantie', minRooms, minArea, maxPrice);
-    insertScraper.run('brockhoff', 'Brockhoff', minRooms, minArea, maxPrice);
-    logInfo("Created default scraper configs");
-  }
-  
-  // Ensure Alliantie scraper exists (migration for existing DBs)
-  const alliantieExists = db.prepare("SELECT id FROM scrapers WHERE id = ?").get('alliantie');
-  if (!alliantieExists) {
-    db.prepare(`INSERT INTO scrapers (id, name, min_rooms, min_living_area, max_price) VALUES (?, ?, ?, ?, ?)`)
-      .run('alliantie', 'Alliantie', 2, 70, 1300);
-    logInfo("Added Alliantie scraper");
-  }
+  // Every platform the app can scrape. One list, used both to seed a fresh
+  // database and to backfill a row for a platform added in a later version.
+  // These used to be two separate lists that had already drifted apart on
+  // their default criteria.
+  const PLATFORMS = [
+    ['funda', 'Funda'],
+    ['vbt', 'VBT'],
+    ['bouwinvest', 'Bouwinvest'],
+    ['mvgm', 'MVGM'],
+    ['alliantie', 'Alliantie'],
+    ['brockhoff', 'Brockhoff']
+  ];
 
-  // Ensure Brockhoff scraper exists (migration for existing DBs)
-  const brockhoffExists = db.prepare("SELECT id FROM scrapers WHERE id = ?").get('brockhoff');
-  if (!brockhoffExists) {
-    // Brockhoff URL pre-filters: 2+ rooms, 75+ m² - stored for documentation
-    db.prepare(`INSERT INTO scrapers (id, name, min_rooms, min_living_area, max_price) VALUES (?, ?, ?, ?, ?)`)
-      .run('brockhoff', 'Brockhoff', 2, 75, 1300);
-    logInfo("Added Brockhoff scraper");
+  // Neutral starting criteria — tune each platform from the Scrapers page.
+  const defaultMinRooms = parseInt(process.env.DEFAULT_MIN_ROOMS) || 2;
+  const defaultMinArea = parseInt(process.env.DEFAULT_MIN_LIVING_AREA) || 40;
+  const defaultMaxPrice = parseInt(process.env.DEFAULT_MAX_PRICE) || 2000;
+
+  const insertScraper = db.prepare(`
+    INSERT OR IGNORE INTO scrapers (id, name, min_rooms, min_living_area, max_price)
+    VALUES (?, ?, ?, ?, ?)
+  `);
+  for (const [id, name] of PLATFORMS) {
+    const info = insertScraper.run(id, name, defaultMinRooms, defaultMinArea, defaultMaxPrice);
+    if (info.changes > 0) logInfo(`Added scraper config: ${name}`);
   }
 
   // Auto-apply columns migration
@@ -394,14 +385,6 @@ function getDatabaseStats() {
     archivedHouses: archivedCount,
     activeHouses: houseCount - archivedCount
   };
-}
-
-function formatBytes(bytes) {
-  if (bytes === 0) return '0 B';
-  const k = 1024;
-  const sizes = ['B', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
 // Scraper config queries

@@ -1,60 +1,20 @@
 "use strict";
-var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __export = (target, all) => {
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
-};
-var __copyProps = (to, from, except, desc) => {
-  if (from && typeof from === "object" || typeof from === "function") {
-    for (let key of __getOwnPropNames(from))
-      if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
-  }
-  return to;
-};
-var __reExport = (target, mod, secondTarget) => (__copyProps(target, mod, "default"), secondTarget && __copyProps(secondTarget, mod, "default"));
-var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-var index_exports = {};
-__export(index_exports, {
-  DEFAULT_USER_AGENT: () => import_http2.DEFAULT_USER_AGENT,
-  adapters: () => adapters,
-  alliantieAdapter: () => import_alliantie.alliantieAdapter,
-  blockedReason: () => blockedReason,
-  bouwinvestAdapter: () => import_bouwinvest.bouwinvestAdapter,
-  brockhoffAdapter: () => import_brockhoff.brockhoffAdapter,
-  collectListings: () => collectListings,
-  consoleLogger: () => import_http2.consoleLogger,
-  fundaAdapter: () => import_funda.fundaAdapter,
-  getAdapter: () => getAdapter,
-  mvgmAdapter: () => import_mvgm.mvgmAdapter,
-  parseEuroPrice: () => import_http2.parseEuroPrice,
-  scrape: () => scrape,
-  scrapePlatform: () => scrapePlatform,
-  silentLogger: () => import_http2.silentLogger,
-  vbtAdapter: () => import_vbt.vbtAdapter
-});
-module.exports = __toCommonJS(index_exports);
-var import_alliantie = require("./adapters/alliantie");
-var import_bouwinvest = require("./adapters/bouwinvest");
-var import_brockhoff = require("./adapters/brockhoff");
-var import_funda = require("./adapters/funda");
-var import_mvgm = require("./adapters/mvgm");
-var import_vbt = require("./adapters/vbt");
-var import_filter = require("./filter");
-var import_http = require("./http");
-__reExport(index_exports, require("./types"), module.exports);
-__reExport(index_exports, require("./filter"), module.exports);
-var import_http2 = require("./http");
+
+const { alliantieAdapter } = require("./adapters/alliantie");
+const { bouwinvestAdapter } = require("./adapters/bouwinvest");
+const { brockhoffAdapter } = require("./adapters/brockhoff");
+const { fundaAdapter } = require("./adapters/funda");
+const { mvgmAdapter } = require("./adapters/mvgm");
+const { vbtAdapter } = require("./adapters/vbt");
+const { dedupeListings, filterListings } = require("./filter");
+const { createHttpClient, delay, silentLogger } = require("./http");
 const adapters = [
-  import_funda.fundaAdapter,
-  import_vbt.vbtAdapter,
-  import_bouwinvest.bouwinvestAdapter,
-  import_mvgm.mvgmAdapter,
-  import_alliantie.alliantieAdapter,
-  import_brockhoff.brockhoffAdapter
+  fundaAdapter,
+  vbtAdapter,
+  bouwinvestAdapter,
+  mvgmAdapter,
+  alliantieAdapter,
+  brockhoffAdapter
 ];
 function getAdapter(id) {
   return adapters.find((a) => a.id === id);
@@ -72,14 +32,14 @@ function blockedReason(adapter, criteria) {
   return null;
 }
 async function scrape(criteria, options = {}) {
-  const logger = options.logger ?? import_http.silentLogger;
+  const logger = options.logger ?? silentLogger;
   const ctx = {
-    http: (0, import_http.createHttpClient)({
+    http: (0, createHttpClient)({
       timeoutMs: options.timeoutMs,
       userAgent: options.userAgent
     }),
     logger,
-    delay: import_http.delay
+    delay: delay
   };
   const selected = options.platforms ? adapters.filter((a) => options.platforms.includes(a.id)) : adapters;
   const results = [];
@@ -99,7 +59,7 @@ async function scrape(criteria, options = {}) {
     }
     try {
       const raw = await adapter.fetch(criteria, ctx);
-      const listings = options.filter === false ? (0, import_filter.dedupeListings)(raw) : (0, import_filter.filterListings)((0, import_filter.dedupeListings)(raw), criteria);
+      const listings = options.filter === false ? (0, dedupeListings)(raw) : (0, filterListings)((0, dedupeListings)(raw), criteria);
       results.push({
         platform: adapter.id,
         listings,
@@ -130,28 +90,15 @@ async function scrapePlatform(id, criteria, options = {}) {
   return result;
 }
 function collectListings(results) {
-  return (0, import_filter.dedupeListings)(results.flatMap((r) => r.listings)).sort(
+  return (0, dedupeListings)(results.flatMap((r) => r.listings)).sort(
     (a, b) => a.price - b.price
   );
 }
-// Annotate the CommonJS export names for ESM import in node:
-0 && (module.exports = {
-  DEFAULT_USER_AGENT,
+
+module.exports = {
   adapters,
-  alliantieAdapter,
-  blockedReason,
-  bouwinvestAdapter,
-  brockhoffAdapter,
-  collectListings,
-  consoleLogger,
-  fundaAdapter,
   getAdapter,
-  mvgmAdapter,
-  parseEuroPrice,
+  blockedReason,
   scrape,
   scrapePlatform,
-  silentLogger,
-  vbtAdapter,
-  ...require("./types"),
-  ...require("./filter")
-});
+};
