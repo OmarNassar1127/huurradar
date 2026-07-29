@@ -53,6 +53,8 @@ function showLoginScreen() {
 async function showApp() {
   document.getElementById('login-screen').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
+
+  showVersion();
   
   // Load scraper configs first (needed for house tooltips)
   await loadScraperConfigs();
@@ -699,3 +701,16 @@ setInterval(() => {
 
 // Initialize
 checkAuth();
+
+// Show the running version in the sidebar. Read from the server rather than
+// hardcoded in the markup, so a release bump cannot leave it stale.
+async function showVersion() {
+  const el = document.getElementById('app-version');
+  if (!el) return;
+  try {
+    const sys = await API.getSystemStats();
+    if (sys.version) el.textContent = `v${sys.version}`;
+  } catch (e) {
+    // Non-fatal: the sidebar simply shows no version.
+  }
+}

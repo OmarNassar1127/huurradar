@@ -21,6 +21,9 @@ router.get('/status', (req, res) => {
   });
 });
 
+// Read once at require time; package.json cannot change while we run.
+const appVersion = require('../package.json').version;
+
 // System stats
 router.get('/system', (req, res) => {
   const systemStats = getSystemStats();
@@ -29,6 +32,7 @@ router.get('/system', (req, res) => {
   
   res.json({
     ...systemStats,
+    version: appVersion,
     storage: storageStats
   });
 });
