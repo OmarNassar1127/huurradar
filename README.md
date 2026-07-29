@@ -30,7 +30,7 @@ npx huurradar         # → http://127.0.0.1:3000
 
 ---
 
-![The dashboard](docs/screenshots/dashboard.png)
+![The dashboard](https://raw.githubusercontent.com/OmarNassar1127/huurradar/main/docs/screenshots/dashboard.png)
 
 <details>
 <summary><b>More screenshots</b> — per-platform criteria, live scraper view</summary>
@@ -38,13 +38,13 @@ npx huurradar         # → http://127.0.0.1:3000
 **Scrapers** — every platform gets its own criteria and its own on/off switch.
 Special addresses bypass all of it.
 
-![Per-platform scraper settings](docs/screenshots/scrapers.png)
+![Per-platform scraper settings](https://raw.githubusercontent.com/OmarNassar1127/huurradar/main/docs/screenshots/scrapers.png)
 
 **Live view** — what each platform returned on the last run, how much of it
 passed, and how much was new. A platform sitting at zero is either genuinely
 empty for your area or broken, and this is where you find out which.
 
-![Live scraper view](docs/screenshots/live-view.png)
+![Live scraper view](https://raw.githubusercontent.com/OmarNassar1127/huurradar/main/docs/screenshots/live-view.png)
 
 </details>
 
