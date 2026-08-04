@@ -216,9 +216,18 @@ public/             dashboard (vanilla JS, Tailwind via CDN)
 Everything is in this one package. No build step, no companion library to
 install, no service to sign up for.
 
+## Docs
+
+- [ARCHITECTURE.md](./ARCHITECTURE.md) — how a run actually flows, and why
+- [CONTRIBUTING.md](./CONTRIBUTING.md) — starts with "a scraper stopped
+  returning anything", because that is why you are there
+- [AGENTS.md](./AGENTS.md) — for coding agents: the invariants that break
+  quietly, and how to verify a parser change against a real page
+- [SECURITY.md](./SECURITY.md)
+
 ## Related
 
-- [`huischeck`](https://github.com/OmarNassar1127/huischeck) — the buying-side counterpart: paste one listing, get a scored due-diligence report
+- [`huischeck`](https://github.com/OmarNassar1127/huischeck-nl) — the buying-side counterpart: paste one listing, get a scored due-diligence report
 
 ## License
 

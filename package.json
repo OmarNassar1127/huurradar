@@ -1,6 +1,6 @@
 {
   "name": "huurradar",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Self-hosted Dutch rental finder: watches six platforms on a schedule, filters to your criteria, reads income requirements off the listing with AI, emails you the matches, and can auto-apply. Web dashboard included.",
   "keywords": [
     "rental",
@@ -40,6 +40,8 @@
     "README.md",
     "LICENSE",
     "ARCHITECTURE.md",
+    "AGENTS.md",
+    "CLAUDE.md",
     "CONTRIBUTING.md",
     "CHANGELOG.md",
     "SECURITY.md"

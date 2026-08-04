@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.0.4
+
+- Added AGENTS.md: the invariants that fail silently rather than loudly, and how
+  to verify a parser change against a real page. `CLAUDE.md` points at it.
+- Fixed the link to huischeck in the README. It pointed at a repo that does not
+  exist publicly.
+
+## 1.0.3
+
+- All three screenshots now render inline in the README, on GitHub and on npm.
+
 ## 1.0.2
 
 - Added screenshots to the README, plus ARCHITECTURE.md, CONTRIBUTING.md and
